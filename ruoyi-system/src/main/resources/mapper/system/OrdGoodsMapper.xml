@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.OrdGoodsMapper">
+    
+    <resultMap type="OrdGoods" id="OrdGoodsResult">
+        <result property="goodsId"    column="goods_id"    />
+        <result property="goodsName"    column="goods_name"    />
+        <result property="sn"    column="sn"    />
+        <result property="price"    column="price"    />
+        <result property="cost"    column="cost"    />
+        <result property="marketEnable"    column="market_enable"    />
+        <result property="point"    column="point"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="lastModify"    column="last_modify"    />
+        <result property="thumbnail"    column="thumbnail"    />
+    </resultMap>
+
+    <sql id="selectOrdGoodsVo">
+        select goods_id, goods_name, sn, price, cost, market_enable, point, create_time, last_modify, thumbnail from ord_goods
+    </sql>
+
+    <select id="selectOrdGoodsList" parameterType="OrdGoods" resultMap="OrdGoodsResult">
+        <include refid="selectOrdGoodsVo"/>
+        <where>  
+            <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
+            <if test="sn != null  and sn != ''"> and sn = #{sn}</if>
+            <if test="price != null "> and price = #{price}</if>
+            <if test="cost != null "> and cost = #{cost}</if>
+            <if test="marketEnable != null  and marketEnable != ''"> and market_enable = #{marketEnable}</if>
+            <if test="point != null  and point != ''"> and point = #{point}</if>
+            <if test="lastModify != null  and lastModify != ''"> and last_modify = #{lastModify}</if>
+            <if test="thumbnail != null  and thumbnail != ''"> and thumbnail = #{thumbnail}</if>
+        </where>
+    </select>
+    
+    <select id="selectOrdGoodsByGoodsId" parameterType="Long" resultMap="OrdGoodsResult">
+        <include refid="selectOrdGoodsVo"/>
+        where goods_id = #{goodsId}
+    </select>
+        
+    <insert id="insertOrdGoods" parameterType="OrdGoods" useGeneratedKeys="true" keyProperty="goodsId">
+        insert into ord_goods
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="goodsName != null">goods_name,</if>
+            <if test="sn != null">sn,</if>
+            <if test="price != null">price,</if>
+            <if test="cost != null">cost,</if>
+            <if test="marketEnable != null">market_enable,</if>
+            <if test="point != null">point,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="lastModify != null">last_modify,</if>
+            <if test="thumbnail != null">thumbnail,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="goodsName != null">#{goodsName},</if>
+            <if test="sn != null">#{sn},</if>
+            <if test="price != null">#{price},</if>
+            <if test="cost != null">#{cost},</if>
+            <if test="marketEnable != null">#{marketEnable},</if>
+            <if test="point != null">#{point},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="lastModify != null">#{lastModify},</if>
+            <if test="thumbnail != null">#{thumbnail},</if>
+         </trim>
+    </insert>
+
+    <update id="updateOrdGoods" parameterType="OrdGoods">
+        update ord_goods
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="goodsName != null">goods_name = #{goodsName},</if>
+            <if test="sn != null">sn = #{sn},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="cost != null">cost = #{cost},</if>
+            <if test="marketEnable != null">market_enable = #{marketEnable},</if>
+            <if test="point != null">point = #{point},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="lastModify != null">last_modify = #{lastModify},</if>
+            <if test="thumbnail != null">thumbnail = #{thumbnail},</if>
+        </trim>
+        where goods_id = #{goodsId}
+    </update>
+
+    <delete id="deleteOrdGoodsByGoodsId" parameterType="Long">
+        delete from ord_goods where goods_id = #{goodsId}
+    </delete>
+
+    <delete id="deleteOrdGoodsByGoodsIds" parameterType="String">
+        delete from ord_goods where goods_id in 
+        <foreach item="goodsId" collection="array" open="(" separator="," close=")">
+            #{goodsId}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.OrdRuleMapper">
+
+    <resultMap type="OrdRule" id="OrdRuleResult">
+        <result property="ruleId"    column="rule_id"    />
+        <result property="consumPoint"    column="consum_point"    />
+        <result property="consumMoney"    column="consum_money"    />
+    </resultMap>
+
+    <sql id="selectOrdRuleVo">
+        select rule_id, consum_point, consum_money from ord_rule
+    </sql>
+
+    <select id="selectOrdRuleList" parameterType="OrdRule" resultMap="OrdRuleResult">
+        <include refid="selectOrdRuleVo"/>
+        <where>
+            <if test="consumPoint != null  and consumPoint != ''"> and consum_point = #{consumPoint}</if>
+            <if test="consumMoney != null  and consumMoney != ''"> and consum_money = #{consumMoney}</if>
+        </where>
+        order by consum_money desc
+    </select>
+
+    <select id="selectOrdRuleByRuleId" parameterType="Long" resultMap="OrdRuleResult">
+        <include refid="selectOrdRuleVo"/>
+        where rule_id = #{ruleId}
+    </select>
+
+    <insert id="insertOrdRule" parameterType="OrdRule">
+        insert into ord_rule
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="ruleId != null">rule_id,</if>
+            <if test="consumPoint != null">consum_point,</if>
+            <if test="consumMoney != null">consum_money,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="ruleId != null">#{ruleId},</if>
+            <if test="consumPoint != null">#{consumPoint},</if>
+            <if test="consumMoney != null">#{consumMoney},</if>
+         </trim>
+    </insert>
+
+    <update id="updateOrdRule" parameterType="OrdRule">
+        update ord_rule
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="consumPoint != null">consum_point = #{consumPoint},</if>
+            <if test="consumMoney != null">consum_money = #{consumMoney},</if>
+        </trim>
+        where rule_id = #{ruleId}
+    </update>
+
+    <delete id="deleteOrdRuleByRuleId" parameterType="Long">
+        delete from ord_rule where rule_id = #{ruleId}
+    </delete>
+
+    <delete id="deleteOrdRuleByRuleIds" parameterType="String">
+        delete from ord_rule where rule_id in
+        <foreach item="ruleId" collection="array" open="(" separator="," close=")">
+            #{ruleId}
+        </foreach>
+    </delete>
+</mapper>

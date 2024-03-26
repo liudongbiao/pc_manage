@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.OrdOrderMapper">
+
+    <resultMap type="OrdOrder" id="OrdOrderResult">
+        <result property="orderId"    column="order_id"    />
+        <result property="tradeSn"    column="trade_sn"    />
+        <result property="memberId"    column="member_id"    />
+        <result property="paymentTime"    column="payment_time"    />
+        <result property="payMoney"    column="pay_money"    />
+        <result property="point"    column="point"    />
+    </resultMap>
+
+    <sql id="selectOrdOrderVo">
+        select order_id, trade_sn, member_id, payment_time, pay_money, point from ord_order
+    </sql>
+
+    <select id="selectOrdOrderList" parameterType="OrdOrder" resultMap="OrdOrderResult">
+        select order_id, trade_sn, ord_member.phone as member_id, payment_time, pay_money, point from ord_order
+        LEFT JOIN ord_member on ord_member.member_id=ord_order.member_id
+        <where>
+            <if test="tradeSn != null  and tradeSn != ''"> and trade_sn = #{tradeSn}</if>
+            <if test="memberId != null "> and member_id = #{memberId}</if>
+            <if test="paymentTime != null "> and payment_time = #{paymentTime}</if>
+            <if test="payMoney != null  and payMoney != ''"> and pay_money = #{payMoney}</if>
+            <if test="point != null  and point != ''"> and point = #{point}</if>
+        </where>
+    </select>
+
+    <select id="selectOrdOrderByOrderId" parameterType="Long" resultMap="OrdOrderResult">
+        <include refid="selectOrdOrderVo"/>
+        where order_id = #{orderId}
+    </select>
+
+    <insert id="insertOrdOrder" parameterType="OrdOrder" useGeneratedKeys="true" keyProperty="orderId">
+        insert into ord_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tradeSn != null">trade_sn,</if>
+            <if test="memberId != null">member_id,</if>
+            <if test="paymentTime != null">payment_time,</if>
+            <if test="payMoney != null">pay_money,</if>
+            <if test="point != null">point,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tradeSn != null">#{tradeSn},</if>
+            <if test="memberId != null">#{memberId},</if>
+            <if test="paymentTime != null">#{paymentTime},</if>
+            <if test="payMoney != null">#{payMoney},</if>
+            <if test="point != null">#{point},</if>
+         </trim>
+    </insert>
+
+    <update id="updateOrdOrder" parameterType="OrdOrder">
+        update ord_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tradeSn != null">trade_sn = #{tradeSn},</if>
+            <if test="memberId != null">member_id = #{memberId},</if>
+            <if test="paymentTime != null">payment_time = #{paymentTime},</if>
+            <if test="payMoney != null">pay_money = #{payMoney},</if>
+            <if test="point != null">point = #{point},</if>
+        </trim>
+        where order_id = #{orderId}
+    </update>
+
+    <delete id="deleteOrdOrderByOrderId" parameterType="Long">
+        delete from ord_order where order_id = #{orderId}
+    </delete>
+
+    <delete id="deleteOrdOrderByOrderIds" parameterType="String">
+        delete from ord_order where order_id in
+        <foreach item="orderId" collection="array" open="(" separator="," close=")">
+            #{orderId}
+        </foreach>
+    </delete>
+</mapper>
